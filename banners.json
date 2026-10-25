@@ -2,50 +2,99 @@
   {
     "id": "ban_top_1",
     "place": "Top Header Banner 1",
-    "img": "/elitenetwork.gif",
+    "img": "/buy.png",
     "position": "top",
-    "url": "https://elitestress.st"
+    "url": "https://t.me/topiaishere"
   },
   {
     "id": "ban_top_2",
     "place": "Top Header Banner 2",
-    "img": "/reverb.gif",
+    "img": "/buy.png",
     "position": "top",
-    "url": "https://t.me/dstatfyi"
+    "url": "https://t.me/topiaishere"
   },
   {
-    "id": "ban_mid_1",
-    "place": "Middle Left Banner",
-    "img": "/ratelimit.gif",
-    "position": "middle_left",
-    "url": "https://t.me/dstatfyi"
+    "id": "ban_top_3",
+    "place": "Top Header Banner 3",
+    "img": "/buy.png",
+    "position": "top",
+    "url": "https://t.me/topiaishere"
   },
   {
-    "id": "ban_mid_2",
-    "place": "Middle Right Banner",
-    "img": "/ifucukenhatethishsit.gif",
-    "position": "middle_right",
-    "url": "https://t.me/dstatfyi"
+    "id": "ban_top_4",
+    "place": "Top Header Banner 4",
+    "img": "/buy.png",
+    "position": "top",
+    "url": "https://t.me/topiaishere"
   },
   {
     "id": "ban_bot_1",
     "place": "Bottom Banner 1",
-    "img": "/sele.gif",
+    "img": "/buy.png",
     "position": "bottom",
-    "url": "https://t.me/dstatfyi"
+    "url": "https://t.me/topiaishere"
+  },
+  {
+    "id": "ban_bot_2",
+    "place": "Bottom Banner 2",
+    "img": "/buy.png",
+    "position": "bottom",
+    "url": "https://t.me/topiaishere"
+  },
+  {
+    "id": "ban_bot_3",
+    "place": "Bottom Banner 3",
+    "img": "/buy.png",
+    "position": "bottom",
+    "url": "https://t.me/topiaishere"
+  },
+  {
+    "id": "ban_bot_4",
+    "place": "Bottom Banner 4",
+    "img": "/buy.png",
+    "position": "bottom",
+    "url": "https://t.me/topiaishere"
   },
   {
     "id": "ban_pop_1",
     "place": "Popout Modal Banner 1",
-    "img": "/vahn.gif",
+    "img": "/buy.png",
     "position": "popout",
-    "url": "https://t.me/dstatfyi"
+    "url": "https://t.me/topiaishere"
   },
   {
     "id": "ban_pop_2",
     "place": "Popout Modal Banner 2",
     "img": "/buy.png",
     "position": "popout",
-    "url": "https://t.me/dstatfyi"
+    "url": "https://t.me/topiaishere"
+  },
+  {
+    "id": "ban_pop_3",
+    "place": "Popout Modal Banner 3",
+    "img": "/buy.png",
+    "position": "popout",
+    "url": "https://t.me/topiaishere"
+  },
+  {
+    "id": "ban_pop_4",
+    "place": "Popout Modal Banner 4",
+    "img": "/buy.png",
+    "position": "popout",
+    "url": "https://t.me/topiaishere"
+  },
+  {
+    "id": "ban_pop_5",
+    "place": "Popout Modal Banner 5",
+    "img": "/buy.png",
+    "position": "popout",
+    "url": "https://t.me/topiaishere"
+  },
+  {
+    "id": "ban_pop_6",
+    "place": "Popout Modal Banner 6",
+    "img": "/buy.png",
+    "position": "popout",
+    "url": "https://t.me/topiaishere"
   }
 ]
