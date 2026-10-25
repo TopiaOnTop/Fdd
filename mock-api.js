@@ -157,7 +157,7 @@
         return bannersState;
     }
 
-    // Chart metrics history cache with smooth organic fluctuation
+    // Chart metrics history cache avec des offsets uniques par serveur
     const metricsHistory = {};
 
     function generateNextMetrics(key, isL7) {
@@ -166,26 +166,36 @@
             const bw = [];
             const pk = [];
             
-            // Baseline range
-            const baseBw = isL7 ? Math.random() * 250000 + 150000 : Math.random() * 25 + 15;
-            const basePk = isL7 ? 0 : baseBw * (Math.random() * 0.4 + 0.6);
+            // Génération de graines et multiplicateurs uniques basés sur les caractères du nom du serveur (key)
+            let hash = 0;
+            for (let i = 0; i < key.length; i++) {
+                hash = (hash << 5) - hash + key.charCodeAt(i);
+                hash |= 0;
+            }
+            const uniqueSeed = Math.abs(hash) % 1000;
+            
+            // Baseline range unique par serveur
+            const baseBw = isL7 
+                ? (uniqueSeed % 180000) + 80000 
+                : (uniqueSeed % 35) + 10;
+            const basePk = isL7 ? 0 : baseBw * (0.5 + (uniqueSeed % 40) / 100);
 
             for (let i = 0; i < points; i++) {
-                const noise = (Math.sin(i * 0.3) + (Math.random() - 0.5) * 0.4);
-                bw.push(Math.max(0.1, baseBw + noise * (baseBw * 0.15)));
-                pk.push(Math.max(0.1, basePk + noise * (basePk * 0.15)));
+                const noise = (Math.sin(i * 0.3 + uniqueSeed) + (Math.random() - 0.5) * 0.5);
+                bw.push(Math.max(0.1, baseBw + noise * (baseBw * 0.2)));
+                pk.push(Math.max(0.1, basePk + noise * (basePk * 0.2)));
             }
-            metricsHistory[key] = { bandwidth: bw, packets: pk, step: points };
+            metricsHistory[key] = { bandwidth: bw, packets: pk, step: points, seed: uniqueSeed };
         } else {
             const h = metricsHistory[key];
             h.step += 1;
             const baseBw = h.bandwidth[h.bandwidth.length - 1];
             const basePk = isL7 ? 0 : h.packets[h.packets.length - 1];
 
-            // Smooth organic sine wave + small noise
-            const delta = Math.sin(h.step * 0.25) * (isL7 ? 15000 : 1.2) + (Math.random() - 0.5) * (isL7 ? 8000 : 0.6);
-            const nextBw = Math.max(isL7 ? 50000 : 2, baseBw + delta);
-            const nextPk = isL7 ? 0 : Math.max(1, nextBw * (0.7 + Math.random() * 0.1));
+            // Variation organique unique basée sur le pas et la seed du serveur
+            const delta = Math.sin(h.step * 0.25 + h.seed) * (isL7 ? 12000 : 1.0) + (Math.random() - 0.5) * (isL7 ? 6000 : 0.5);
+            const nextBw = Math.max(isL7 ? 30000 : 1, baseBw + delta);
+            const nextPk = isL7 ? 0 : Math.max(1, nextBw * (0.6 + Math.random() * 0.2));
 
             h.bandwidth.shift();
             h.bandwidth.push(nextBw);
