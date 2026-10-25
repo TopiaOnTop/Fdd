@@ -28,8 +28,10 @@ function renderServers(servers, currentLayer) {
                 content.innerHTML = '<p class="text-sm text-gray-400 px-3 py-1">No servers</p>';
             } else {
                 Object.entries(servers2).forEach(([id, srv]) => {
+                    const lFlag = layer === 'layer4' ? 'l4' : 'l7';
+                    const targetHref = `index.html?${lFlag}&id=${encodeURIComponent(id)}`;
                     content.innerHTML += `
-                        <a href="/${layer === 'layer4' ? 'l4' : 'l7'}?id=${id}" class="sub-server-button flex items-center gap-2 px-3 py-1.5 text-sm text-gray-400 hover:text-white rounded-md">
+                        <a href="${targetHref}" data-layer="${layer}" data-id="${id}" class="sub-server-button server-select-btn flex items-center gap-2 px-3 py-1.5 text-sm text-gray-400 hover:text-white rounded-md">
                             <img src="${srv.flag}" class="w-4 h-4 rounded-full flex-shrink-0">
                             <span class="flex-1 truncate">${srv.name}</span>
                             <span class="text-xs bg-gray-500/10 text-gray-500 px-1.5 py-0.5 rounded font-semibold">${srv.bandwidth}</span>
@@ -40,7 +42,28 @@ function renderServers(servers, currentLayer) {
         });
         nav.appendChild(layerDiv);
     });
+
     if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    // Attach SPA click handlers
+    document.querySelectorAll('.server-select-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            // Only SPA handle if we are on index.html or root
+            if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname === '') {
+                e.preventDefault();
+                const layer = btn.getAttribute('data-layer');
+                const sid = btn.getAttribute('data-id');
+                const lFlag = layer === 'layer4' ? 'l4' : 'l7';
+                const newUrl = `index.html?${lFlag}&id=${encodeURIComponent(sid)}`;
+                window.history.pushState({ layer, id: sid }, '', newUrl);
+                if (typeof window.switchActiveServer === 'function') {
+                    window.switchActiveServer(layer, sid);
+                } else {
+                    window.location.href = newUrl;
+                }
+            }
+        });
+    });
 }
 
 function initializeSidebar() {

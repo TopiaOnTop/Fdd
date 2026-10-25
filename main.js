@@ -1,51 +1,18 @@
+let activeInterval = null;
+let currentLayer = 'layer4';
+let currentSid = null;
+let cachedServers = null;
+
 document.addEventListener('DOMContentLoaded', async () => {
     const loader = document.getElementById('loader');
-    const urlParams = new URLSearchParams(window.location.search);
-    const selectedServerId = urlParams.get('id');
     
-    const isLayer7Route = window.location.pathname.startsWith('/l7') || window.location.pathname.startsWith('/layer7') || urlParams.has('l7');
-    const layer = isLayer7Route ? 'layer7' : 'layer4';
-
     try {
-        const servers = await fetch('/api/servers').then(r => r.json());
-        const serversLayer = servers[layer] || {};
+        cachedServers = await fetch('/api/servers').then(r => r.json());
+        
+        // Initial parse
+        parseUrlAndSwitch();
 
-        let selectedServer = null;
-        let activeServerKey = null;
-
-        if (selectedServerId) {
-            for (const cat of Object.values(serversLayer)) {
-                if (cat.servers) {
-                    for (const [sKey, sVal] of Object.entries(cat.servers)) {
-                        if (sKey.toLowerCase() === selectedServerId.toLowerCase() || sVal.name.toLowerCase() === selectedServerId.toLowerCase()) {
-                            selectedServer = sVal;
-                            activeServerKey = sKey;
-                            break;
-                        }
-                    }
-                }
-                if (selectedServer) break;
-            }
-        }
-        if (!selectedServer) {
-            for (const cat of Object.values(serversLayer)) {
-                for (const [sKey, sVal] of Object.entries(cat.servers || {})) {
-                    selectedServer = sVal;
-                    activeServerKey = sKey;
-                    break;
-                }
-                if (selectedServer) break;
-            }
-        }
-        if (!selectedServer) {
-            selectedServer = isLayer7Route
-                ? { name: 'FDCServer', ip: 'https://50.7.24.51/', ports: '443', bandwidth: '2M' }
-                : { name: 'Vantiva', ip: '157.254.50.8', ports: '22 & 80', bandwidth: '400 Gbps' };
-            activeServerKey = isLayer7Route ? 'FDCServer' : 'Vantiva';
-        }
-
-        renderGraphDetails(selectedServer);
-        renderServers(servers, layer);
+        renderServers(cachedServers, currentLayer);
 
         document.querySelectorAll('.layer-button').forEach(function(btn) {
             btn.addEventListener('click', function() {
@@ -68,16 +35,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         });
 
-        const sid = activeServerKey;
-        const chartRes = await fetch(`/api/${layer}/${sid}`).then(r => r.json()).catch(() => ({ bandwidth: Array(50).fill(0), packets: Array(50).fill(0) }));
-        createChart({
-            bandwidth: (chartRes.bandwidth || []).map(Number),
-            packets: (chartRes.packets || []).map(Number)
+        window.addEventListener('popstate', () => {
+            parseUrlAndSwitch();
         });
-
-        if (typeof lucide !== 'undefined') lucide.createIcons();
-
-        setInterval(() => updateChart(layer, sid), 1500);
 
     } catch(e) {
         console.error('main.js error:', e);
@@ -85,3 +45,68 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (loader) loader.classList.add('hidden');
     }
 });
+
+function parseUrlAndSwitch() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedServerId = urlParams.get('id');
+    const isLayer7Route = window.location.pathname.startsWith('/l7') || window.location.pathname.startsWith('/layer7') || urlParams.has('l7') || urlParams.get('layer') === 'layer7';
+    const layer = isLayer7Route ? 'layer7' : 'layer4';
+
+    window.switchActiveServer(layer, selectedServerId);
+}
+
+window.switchActiveServer = async function(layer, serverId) {
+    currentLayer = layer;
+    if (!cachedServers) return;
+
+    const serversLayer = cachedServers[layer] || {};
+
+    let selectedServer = null;
+    let activeServerKey = null;
+
+    if (serverId) {
+        for (const cat of Object.values(serversLayer)) {
+            if (cat.servers) {
+                for (const [sKey, sVal] of Object.entries(cat.servers)) {
+                    if (sKey.toLowerCase() === serverId.toLowerCase() || sVal.name.toLowerCase() === serverId.toLowerCase()) {
+                        selectedServer = sVal;
+                        activeServerKey = sKey;
+                        break;
+                    }
+                }
+            }
+            if (selectedServer) break;
+        }
+    }
+    if (!selectedServer) {
+        for (const cat of Object.values(serversLayer)) {
+            for (const [sKey, sVal] of Object.entries(cat.servers || {})) {
+                selectedServer = sVal;
+                activeServerKey = sKey;
+                break;
+            }
+            if (selectedServer) break;
+        }
+    }
+    if (!selectedServer) {
+        selectedServer = (layer === 'layer7')
+            ? { name: 'FDCServer', ip: 'https://50.7.24.51/', ports: '443', bandwidth: '2M' }
+            : { name: 'Latitude', ip: '152.236.39.20', ports: '22 & 80', bandwidth: '200 Gbps' };
+        activeServerKey = (layer === 'layer7') ? 'FDCServer' : 'Latitude';
+    }
+
+    currentSid = activeServerKey;
+
+    renderGraphDetails(selectedServer);
+
+    const chartRes = await fetch(`/api/${layer}/${currentSid}`).then(r => r.json()).catch(() => ({ bandwidth: Array(50).fill(0), packets: Array(50).fill(0) }));
+    createChart({
+        bandwidth: (chartRes.bandwidth || []).map(Number),
+        packets: (chartRes.packets || []).map(Number)
+    });
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    if (activeInterval) clearInterval(activeInterval);
+    activeInterval = setInterval(() => updateChart(currentLayer, currentSid), 1500);
+};
