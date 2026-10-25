@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+
+<head>
+    <meta charset="UTF-8">
+    <title>dstat.in - Layer4 & Layer7 Dstats.</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="icon" type="image/x-icon" href="public/assets/img/dstat.html">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+    <meta name="title" content="Embrace the Power of Layer4 & Layer7 Dstats on a Single Platform.">
+    <meta name="description"
+        content="Simplified Private L4 & L7 Dstats and dynamic Dstat graphs for everyone. Layer4 & Layer7 Dstat are Love in our eye. Private Dstats & Online graphs for everyone.">
+    <meta name="keywords"
+        content="dstat, dstatlove, dstatonline, dstatone, dstatspace, spacedstat, dstatcc, stresser, booter, ddos, dstats, dstatpm, braindead, private, private dstat, privat, live dstat, live, layer4, layer7, layer 4, layer 7, stresstesting, dstatcc, stresser, performance, monitoring, resourceusage, network, system, utilization, statistics, commandline, realtime, analysis, metrics, reporting, server, client, connections, throughput, bandwidth, cpu, ram, disk, i/o, uptime, loadaverage, networktraffic, packetloss, latency, requests, concurrent, connections, attacks, bottlenecks, benchmarking, scalability, testingtools, testingtechniques, ddos, attacks, security, firewall, attacksurface, ddosprotection, attackvectors, networkprotocols, trafficgeneration, trafficanalysis, protocols, http, https, tcp, udp, icmp, ssl, tls, serverload, serverperformance, networkperformance, distributedsystems, webapplications, webserver, cloudcomputing, cloudservices, containerization, microservices, virtualization, servermonitoring, servermanagement, applicationperformance, applicationmonitoring, applicationmetrics, datacenter, serverhealth, serverstatistics, open-source, commandlineutility, resourcemanagement, networkstatistics, networkmonitoring, networkutilization, networkthroughput, systemresources, systemperformance, cpuusage, ramusage, diskusage, i/outilization, dstatcommands, dstatreporting, dstatoutput, loadbalancer, serverstatus, loadtesting, benchmarkingtools, webtraffic, netstat, systemutilities, networktools, resourceutilization, distributedsystems, serveranalysis, networkanalysis, performanceoptimization, serveroptimization, datatraffic, networkstress, serverstress">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="Professional Layer4 & Layer7 Dstats.">
+    <meta property="og:description"
+        content="Simplified Private L4 & L7 Dstats and dynamic Dstat graphs for everyone. Free, versatile, and compatible with all web platforms. Discover the ultimate experience with our Private Dstats.">
+    <meta property="og:image" content="assets/img/dstat.html">
+    <meta property="og:url" content="index.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Bungee:wght@400&amp;display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com/"></script>
+    <script src="https://unpkg.com/lucide@1.31.0/dist/umd/lucide.js"></script>
+    <script src="mock-api.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="sidebar.js"></script>
+    <script src="ui.js"></script>
+    <script src="chart.js"></script>
+    <script src="main.js"></script>
+    <script src="banners.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        .graph-grid>div {
+            border-left-width: .375pt;
+        }
+
+        [class~=category-content] {
+            max-height: 0;
+        }
+
+        details>summary {
+            list-style: none;
+        }
+
+        [class~=category-content] {
+            overflow: hidden;
+        }
+
+        .graph-grid>div {
+            border-bottom-width: .375pt;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        .graph-grid>div {
+            border-right-width: .375pt;
+        }
+
+        [class~=category-content] {
+            transition: max-height .3s ease-out, opacity .3s ease-out;
+        }
+
+        .graph-grid>div {
+            border-top-width: .375pt;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+        }
+
+        details>summary::-webkit-details-marker {
+            display: none;
+        }
+
+        #loader[class~=hidden],
+        [class~=category-content] {
+            opacity: 0;
+        }
+
+        #loader {
+            position: fixed;
+        }
+
+        #loader {
+            top: 0;
+        }
+
+        body {
+            user-select: none;
+        }
+
+        .graph-grid>div,
+        .spinner {
+            border-left-style: solid;
+        }
+
+        [class~=rotate-icon] {
+            transition: transform .3s ease-in-out;
+        }
+
+        /* Theme CSS Variables */
+        :root {
+            --bg-primary: #0A0B12;
+            --bg-secondary: #0D0E1A;
+            --bg-badge: #1a1a2a;
+            --border-color: #2A2E3F;
+            --text-primary: #ffffff;
+            --text-secondary: #d1d5db;
+            --accent-color: #3b82f6;
+            --accent-secondary: #9CA3AF;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --gradient-primary: linear-gradient(135deg, #4B5563 0%, #1F2937 100%);
+            --gradient-secondary: linear-gradient(135deg, #6B7280 0%, #374151 100%);
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Theme classes */
+        body.theme-blue {
+            --bg-primary: #0A0B1A;
+            --bg-secondary: #0D0E23;
+            --border-color: #374151;
+            --accent-color: #3b82f6;
+            --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --shadow-color: rgba(59, 130, 246, 0.1);
+        }
+
+        body.theme-gray {
+            --bg-primary: #0A0B12;
+            --bg-secondary: #0D0E1A;
+            --border-color: #2A2E3F;
+            --accent-color: #6B7280;
+            --gradient-primary: linear-gradient(135deg, #4B5563 0%, #1F2937 100%);
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        body.theme-red {
+            --bg-primary: #0F0A1A;
+            --bg-secondary: #150D23;
+            --border-color: #3D2E5C;
+            --accent-color: #8b5cf6;
+            --gradient-primary: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            --shadow-color: rgba(139, 92, 246, 0.15);
+        }
+
+        .category-content.show {
+            max-height: 62.5pc;
+        }
+
+        * {
+            -ms-overflow-style: none;
+        }
+
+        .spinner,
+        .graph-grid>div {
+            border-bottom-style: solid;
+        }
+
+        #loader {
+            left: 0;
+        }
+
+        #loader {
+            width: 100%;
+        }
+
+        .graph-grid>div,
+        .spinner {
+            border-right-style: solid;
+        }
+
+        #loader {
+            height: 100%;
+        }
+
+        * {
+            scrollbar-width: none;
+        }
+
+        .spinner,
+        .graph-grid>div {
+            border-top-style: solid;
+        }
+
+        .graph-grid>div {
+            border-left-color: rgba(107, 114, 128, 0.3);
+        }
+
+        .server-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px var(--shadow-color);
+        }
+
+        .server-card:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 8px 25px var(--shadow-color);
+            transform: translateY(-2px);
+        }
+
+        .category-header {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .status-online {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .status-offline {
+            color: var(--accent-secondary);
+            font-weight: 600;
+        }
+
+        .bandwidth-text {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .pps-text {
+            color: var(--warning-color);
+            font-weight: 600;
+        }
+
+        .server-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .server-card:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+        }
+
+        [class~=graph-grid] {
+            display: grid;
+        }
+
+        .graph-grid>div {
+            border-bottom-color: rgba(203, 213, 225, .1);
+        }
+
+        [class~=graph-grid] {
+            grid-template-columns: repeat(6, 1fr);
+        }
+
+        .graph-grid>div {
+            border-right-color: rgba(203, 213, 225, .1);
+        }
+
+        [class~=graph-grid] {
+            grid-template-rows: repeat(6, 1fr);
+        }
+
+        #loader {
+            background: var(--bg-primary);
+        }
+
+        #loader {
+            display: flex;
+        }
+
+        .sidebar-item {
+            transition: color .2s ease-in-out;
+        }
+
+        .graph-grid>div {
+            border-top-color: rgba(203, 213, 225, .1);
+        }
+
+        #loader {
+            justify-content: center;
+        }
+
+        .spinner {
+            width: 3.125pc;
+        }
+
+        .spinner {
+            height: 3.125pc;
+        }
+
+        .spinner {
+            border-left-width: 3.75pt;
+        }
+
+        .spinner {
+            border-bottom-width: 3.75pt;
+        }
+
+        .spinner {
+            border-right-width: 3.75pt;
+        }
+
+        .spinner {
+            border-top-width: 5px;
+        }
+
+        .graph-grid>div {
+            border-image: none;
+        }
+
+        #loader {
+            align-items: center;
+        }
+
+        #loader {
+            z-index: 1000;
+        }
+
+        .category-content.show,
+        #loader {
+            opacity: 1;
+        }
+
+        .spinner {
+            border-left-color: rgba(255, 255, 255, .2);
+        }
+
+        .spinner {
+            border-bottom-color: rgba(255, 255, 255, .2);
+        }
+
+        .spinner {
+            border-right-color: rgba(255, 255, 255, .2);
+        }
+
+        #loader {
+            transition: opacity .5s ease-out;
+        }
+
+        .spinner {
+            border-top-color: #fff;
+        }
+
+        .spinner {
+            border-image: none;
+        }
+
+        .spinner {
+            border-radius: 50%;
+        }
+
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        [class~=rotate-icon][class~=open] {
+            transform: rotate(90deg);
+        }
+
+        #loader[class~=hidden] {
+            pointer-events: none;
+        }
+
+        /* Expandable Themes Box - No hover effects */
+        .themes-container {
+            margin-top: 8px;
+        }
+
+        .themes-header {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .themes-header span {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .themes-header svg {
+            transition: transform 0.3s ease;
+            color: var(--text-secondary);
+            width: 16px;
+            height: 16px;
+        }
+
+        .themes-header.open svg {
+            transform: rotate(180deg);
+        }
+
+        .themes-dropdown {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            margin-top: 4px;
+            border-radius: 8px;
+        }
+
+        .themes-dropdown.show {
+            max-height: 200px;
+        }
+
+        .theme-option {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-top: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .theme-option .color-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot-blue {
+            background: #3b82f6;
+        }
+
+        .dot-gray {
+            background: #6B7280;
+        }
+
+        .dot-red {
+            background: #8b5cf6;
+        }
+
+        /* Floating Telegram Box - Bottom Right - FIXED: X icon not touching text */
+        .telegram-popup {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 360px;
+            background: #0D0E1A;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            border: 1px solid #2A2E3F;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .telegram-popup.hide {
+            display: none;
+        }
+
+        .telegram-popup-body {
+            padding: 22px 24px 22px 24px;
+            text-align: center;
+        }
+
+        .telegram-popup-body p {
+            color: #d1d5db;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            padding-right: 20px;
+        }
+
+        .telegram-join-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #0088cc;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .close-telegram-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+            z-index: 10;
+        }
+
+        .close-telegram-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .close-telegram-btn svg {
+            display: block;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Sidebar nav pill styles */
+        .sidebar-item {
+            transition: all 0.2s ease;
+            border-radius: 8px;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: white !important;
+        }
+
+        .sidebar-item.active-nav {
+            background: rgba(255, 255, 255, 0.08);
+            color: white !important;
+            border-left: 2px solid var(--accent-color);
+            font-weight: 600;
+        }
+
+        .sub-server-button {
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .sub-server-button:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: white;
+        }
+
+        .sidebar-item-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            color: var(--text-secondary, #9ca3af);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-item-link:hover {
+            color: white;
+        }
+
+        /* Snow effect */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1em;
+            pointer-events: none;
+            z-index: 9999;
+            animation: snowfall linear infinite;
+        }
+
+        @keyframes snowfall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0.3;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-[--bg-primary] min-h-screen text-[--text-primary]">
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+    <div class="flex min-h-screen">
+        <aside id="sidebar"
+            class="fixed top-3 bottom-10 left-4 w-64 bg-[--bg-secondary] px-3 py-4 shadow-lg z-50 overflow-y-auto border border-gray-800/50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out rounded-2xl">
+            <button id="closeSidebar"
+                class="md:hidden absolute top-4 right-4 text-[--text-secondary] hover:text-[--text-primary]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div class="mb-6 flex items-center gap-3 px-3 pt-2">
+                <div
+                    style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:8px;flex-shrink:0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="text-gray-400">
+                        <path
+                            d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+                        <path
+                            d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+                        <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
+                        <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+                    </svg>
+                </div>
+                <span class="text-base font-bold tracking-tight text-[--text-primary]">dstat.in</span>
+            </div>
+            <nav class="flex-1 space-y-6">
+                <div>
+                    <p class="px-3 text-xs font-semibold text-[--text-secondary] uppercase mb-2">MAIN</p>
+                    <div class="space-y-1">
+                        <a href="index.html" class="sidebar-item-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-5v-7H9v7H4a2 2 0 0 1-2-2z" />
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="reviews.html" class="sidebar-item-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
+                                class="h-4 w-4">
+                                <path fill-rule="evenodd"
+                                    d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span>Booter Review</span>
+                        </a>
+                        <a href="checkout.html" class="sidebar-item-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="m3 11 18-5v12L3 14v-3z"/>
+                                <path d="M11.6 16.8 a3 3 0 1 1-5.8-1.6"/>
+                            </svg>
+                            <span>Advertisements</span>
+                        </a>
+                    </div>
+                </div>
+
+
+                <div>
+                    <p class="px-3 text-xs font-semibold text-[--text-secondary] uppercase mb-2">LIVE DSTAT</p>
+                    <div class="space-y-1" id="servers-nav"></div>
+                </div>
+            </nav>
+        </aside>
+        <main class="flex-1 p-5 md:p-6 overflow-y-auto md:ml-72">
+            <button id="openSidebar" class="md:hidden fixed top-4 left-4 z-50 text-[--text-secondary]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <div class="space-y-6">
+                <div
+                    class="bg-[--bg-secondary] border border-gray-800 rounded-lg shadow-sm flex justify-end items-center gap-2 px-4 py-2 mb-3">
+                    <!-- Telegram -->
+                    <a href="https://t.me/dstatfyi" target="_blank"
+                        style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:6px 8px;display:flex;align-items:center;"
+                        class="text-[--text-secondary] hover:text-white transition-colors">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.26 14.4l-2.95-.924c-.64-.203-.654-.64.136-.954l11.52-4.44c.534-.194 1.001.13.596.166z" />
+                        </svg>
+                    </a>
+                    <!-- Updates -->
+                    <div class="relative">
+                        <button id="updatesBtn"
+                            style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:6px 8px;display:flex;align-items:center;"
+                            class="text-[--text-secondary] hover:text-white transition-colors">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                            </svg>
+                        </button>
+                        <div id="updatesDropdown"
+                            class="hidden absolute right-0 top-10 w-72 bg-[--bg-secondary] border border-gray-800/50 rounded-lg shadow-xl z-50 p-4">
+                            <div class="text-xs text-[--text-secondary] mb-1">28.08.2026</div>
+                            <div class="text-sm font-semibold text-[--text-primary] mb-2">dstat.in - Loadproxy
+                            </div>
+                            <div class="text-xs text-[--text-secondary] leading-relaxed">Loadproxy dstat has been added.
+                                Attacks can take 30 seconds to appear.</div>
+                        </div>
+                    </div>
+                    <!-- Language -->
+                    <div class="relative">
+                        <button id="langBtn"
+                            style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:6px 10px;display:flex;align-items:center;gap:6px;"
+                            class="text-[--text-secondary] hover:text-white transition-colors text-sm">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="2" y1="12" x2="22" y2="12" />
+                                <path
+                                    d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                            </svg>
+                            <span id="currentLang">English</span>
+                        </button>
+                        <div id="langDropdown"
+                            class="hidden absolute right-0 top-10 w-36 bg-[--bg-secondary] border border-gray-800/50 rounded-lg shadow-xl z-50 overflow-hidden">
+                            <button onclick="setLang('en')"
+                                class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-[--text-secondary] hover:text-white hover:bg-white/5 transition-colors">English</button>
+                            <button onclick="setLang('ru')"
+                                class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-[--text-secondary] hover:text-white hover:bg-white/5 transition-colors">Russian</button>
+                            <button onclick="setLang('zh')"
+                                class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-[--text-secondary] hover:text-white hover:bg-white/5 transition-colors">Chinese</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-[--bg-secondary] border border-gray-800 rounded-lg shadow-sm overflow-hidden">
+                    <div class="p-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="banner-list-1"></div>
+                    </div>
+                </div>
+
+
+
+                <div class="flex flex-col lg:flex-row justify-center gap-6">
+                    <div
+                        class="rounded-lg border text-[--text-primary] shadow-sm h-[485px] w-full lg:w-[450px] bg-[--bg-secondary] border-gray-800/50">
+                        <div class="p-6 flex flex-col h-full">
+                            <div class="text-center mb-4">
+                                <h2 class="text-lg font-medium text-[--text-primary]">Graph Details</h2>
+                                <p id="graph-subtitle" class="text-sm text-[--text-secondary]">A default dstat</p>
+                            </div>
+                            <div class="w-full h-px bg-[--border-color] mb-4"></div>
+                            <div class="space-y-4 flex-grow" id="graph-details"></div>
+                            <div class="mt-auto rounded-lg border border-yellow-600/20 bg-yellow-600/5 p-4">
+                                <p class="text-xs font-medium text-yellow-600/90">REMINDER</p>
+                                <p class="mt-2 text-xs text-yellow-600/70">At the moment, layer 4 and layer 7 of the
+                                    dstat are being tested; all errors found will be corrected!</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="rounded-lg border text-[--text-primary] shadow-sm h-[485px] w-full lg:w-[1000px] bg-[--bg-secondary] border-gray-800/50">
+                        <div class="p-4 h-full">
+                            <div id="chart-container" class="w-full h-full"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-[--bg-secondary] border border-gray-800 rounded-lg shadow-sm overflow-hidden">
+                    <div class="p-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="banner-list-2"></div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center p-4 text-sm text-gray-600 border-t border-gray-800/50">
+                    <div class="text-left">Copyright &copy;2026 dstat.in All rights Reserved | Version 1.4</div>
+                    <div class="text-right flex items-center">
+                        Hand-crafted & Made with
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="ml-1 text-gray-600">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Floating Telegram Popup - All black, SVG icons only - FIXED: X icon with proper spacing -->
+    <div id="telegramPopup" class="telegram-popup">
+        <button class="close-telegram-btn" id="closeTelegramPopup">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18M6 6L18 18" stroke="white" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </button>
+        <div class="telegram-popup-body">
+            <p>Stay updated with latest news, features, and support. Join our Telegram channel!</p>
+            <a href="https://t.me/dstatfyi" target="_blank" class="telegram-join-btn" id="telegramJoinBtn">
+                Join Telegram
+            </a>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/disable-devtool"></script>
+    <script>
+     DisableDevtool({
+       ondevtoolopen: (type) => {
+         window.location.href = 'about:blank';
+       }
+     });
+    </script>
+    <script>
+        // COOKIE FUNCTIONS
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        // THEME FUNCTIONS
+        function setTheme(theme) {
+            document.body.classList.remove('theme-blue', 'theme-gray', 'theme-red');
+            if (theme === 'blue') {
+                document.body.classList.add('theme-blue');
+            } else if (theme === 'gray') {
+                document.body.classList.add('theme-gray');
+            } else if (theme === 'red') {
+                document.body.classList.add('theme-red');
+            }
+            setCookie('dstat_theme', theme, 30);
+        }
+
+        function loadSavedTheme() {
+            const savedTheme = getCookie('dstat_theme');
+            if (savedTheme && (savedTheme === 'blue' || savedTheme === 'gray' || savedTheme === 'red')) {
+                setTheme(savedTheme);
+            } else {
+                setTheme('gray');
+            }
+        }
+
+        // TELEGRAM POPUP - saves cookie when SEEN (no need to click X)
+        function initTelegramPopup() {
+            const hasSeenPopup = getCookie('dstat_telegram_seen');
+            const popup = document.getElementById('telegramPopup');
+
+            if (!hasSeenPopup && popup) {
+                popup.classList.remove('hide');
+                // Save cookie immediately when popup is shown (user has seen it)
+                setCookie('dstat_telegram_seen', 'true', 365);
+            } else if (popup) {
+                popup.classList.add('hide');
+            }
+
+            // Close button functionality
+            const closeBtn = document.getElementById('closeTelegramPopup');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    popup.classList.add('hide');
+                });
+            }
+        }
+
+        // Expand/collapse themes dropdown
+        const themesHeader = document.getElementById('themesHeader');
+        const themesDropdown = document.getElementById('themesDropdown');
+        if (themesHeader && themesDropdown) {
+            themesHeader.addEventListener('click', () => {
+                themesDropdown.classList.toggle('show');
+                themesHeader.classList.toggle('open');
+            });
+        }
+
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            if (loader) loader.classList.add('hidden');
+
+            loadSavedTheme();
+            initTelegramPopup();
+
+            const openBtn = document.getElementById('openSidebar');
+            const closeBtn = document.getElementById('closeSidebar');
+            const sidebar = document.getElementById('sidebar');
+            if (openBtn && closeBtn && sidebar) {
+                openBtn.addEventListener('click', () => sidebar.classList.remove('-translate-x-full'));
+                closeBtn.addEventListener('click', () => sidebar.classList.add('-translate-x-full'));
+            }
+
+            fetch('/api/servers').then(r => r.json()).then(servers => {
+                renderServers(servers, 'layer4');
+                document.querySelectorAll('.layer-button').forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        var c = btn.nextElementSibling;
+                        var i = btn.querySelector('.rotate-icon');
+                        var o = c.style.maxHeight && c.style.maxHeight !== '0px';
+                        c.style.maxHeight = o ? '0px' : '600px';
+                        c.style.opacity = o ? '0' : '1';
+                        if (i) i.classList.toggle('open');
+                    });
+                });
+                document.querySelectorAll('.category-button').forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        var c = btn.nextElementSibling;
+                        var i = btn.querySelector('.rotate-icon');
+                        var o = c.style.maxHeight && c.style.maxHeight !== '0px';
+                        c.style.maxHeight = o ? '0px' : '600px';
+                        c.style.opacity = o ? '0' : '1';
+                        if (i) i.classList.toggle('open');
+                    });
+                });
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }).catch(() => { });
+        });
+    </script>
+
+    <script>
+        // ---------- LANGUAGE / TRANSLATIONS ----------
+        const translations = {
+            en: {
+                dashboard: 'Dashboard', booterReview: 'Booter Review', advertisments: 'Advertisements',
+                liveDstat: 'LIVE DSTAT', graphDetails: 'Graph Details', graphName: 'Graph Name',
+                ipAddress: 'IP Address', bandwidth: 'Bandwidth', tcpUdp: 'TCP & UDP Port',
+                reminder: 'REMINDER', reminderText: 'At the moment, layer 4 and layer 7 of the dstat are being tested; all errors found will be corrected!',
+                contact: 'If you want to add your own dstat, contact', main: 'MAIN'
+            },
+            ru: {
+                dashboard: 'Главная', booterReview: 'Обзор Бутеров', advertisments: 'Реклама',
+                liveDstat: 'LIVE DSTAT', graphDetails: 'Детали Графика', graphName: 'Имя Графика',
+                ipAddress: 'IP Адрес', bandwidth: 'Пропускная способность', tcpUdp: 'TCP и UDP Порт',
+                reminder: 'НАПОМИНАНИЕ', reminderText: 'В настоящее время тестируются уровни 4 и 7 dstat; все найденные ошибки будут исправлены!',
+                contact: 'Если хотите добавить свой dstat, свяжитесь с', main: 'ГЛАВНАЯ'
+            },
+            zh: {
+                dashboard: '仪表板', booterReview: '压测评测', advertisments: '广告',
+                liveDstat: '实时监控', graphDetails: '图表详情', graphName: '图表名称',
+                ipAddress: 'IP地址', bandwidth: '带宽', tcpUdp: 'TCP和UDP端口',
+                reminder: '提醒', reminderText: '目前正在测试dstat的第4层和第7层；发现的所有错误将被修正！',
+                contact: '如果您想添加自己的dstat，请联系', main: '主菜单'
+            }
+        };
+
+        const langLabels = { en: 'English', ru: 'Russian', zh: 'Chinese' };
+
+        function setLang(lang) {
+            if (!translations[lang]) lang = 'en';
+            setCookie('dstat_lang', lang, 30);
+            const t = translations[lang];
+
+            const currentLangEl = document.getElementById('currentLang');
+            if (currentLangEl) currentLangEl.textContent = langLabels[lang];
+
+            const langDropdown = document.getElementById('langDropdown');
+            if (langDropdown) langDropdown.classList.add('hidden');
+
+            const links = document.querySelectorAll('.sidebar-item-link span');
+            if (links[0]) links[0].textContent = t.dashboard;
+            if (links[1]) links[1].textContent = t.booterReview;
+            if (links[2]) links[2].textContent = t.advertisments;
+
+            document.querySelectorAll('.uppercase.mb-2').forEach(el => {
+                if (el.textContent.trim().match(/^(MAIN|ГЛАВНАЯ|主菜单)$/i)) el.textContent = t.main;
+                if (el.textContent.trim().match(/^(LIVE DSTAT|实时监控)$/i)) el.textContent = t.liveDstat;
+            });
+
+            const themesSpan = document.querySelector('.themes-header span');
+            if (themesSpan) themesSpan.textContent = t.themes;
+        }
+
+        function loadSavedLang() {
+            const lang = getCookie('dstat_lang') || 'en';
+            setLang(lang);
+        }
+
+        // ---------- DROPDOWNS (updates + language) ----------
+        function initDropdowns() {
+            const updatesBtn = document.getElementById('updatesBtn');
+            const langBtn = document.getElementById('langBtn');
+            const updatesDropdown = document.getElementById('updatesDropdown');
+            const langDropdown = document.getElementById('langDropdown');
+
+            if (updatesBtn) {
+                updatesBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    updatesDropdown.classList.toggle('hidden');
+                    langDropdown.classList.add('hidden');
+                });
+            }
+
+            if (langBtn) {
+                langBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    langDropdown.classList.toggle('hidden');
+                    updatesDropdown.classList.add('hidden');
+                });
+            }
+
+            document.addEventListener('click', function () {
+                if (updatesDropdown) updatesDropdown.classList.add('hidden');
+                if (langDropdown) langDropdown.classList.add('hidden');
+            });
+        }
+
+        // ---------- SNOW EFFECT (persists across pages via cookie) ----------
+        let snowInterval = null;
+        let snowEnabled = false;
+
+        function createSnowflake() {
+            const flake = document.createElement('div');
+            flake.className = 'snowflake';
+            flake.innerHTML = ['❄', '❅', '❆', '•'][Math.floor(Math.random() * 4)];
+            flake.style.left = Math.random() * 100 + 'vw';
+            flake.style.fontSize = (Math.random() * 10 + 8) + 'px';
+            flake.style.opacity = Math.random() * 0.6 + 0.2;
+            const duration = Math.random() * 6 + 5;
+            flake.style.animationDuration = duration + 's';
+            document.body.appendChild(flake);
+            setTimeout(() => flake.remove(), (duration + 3) * 1000);
+        }
+
+        function startSnow() {
+            if (snowInterval) return;
+            snowEnabled = true;
+            setCookie('dstat_snow', '1', 30);
+            const btn = document.getElementById('snowBtn');
+            if (btn) btn.style.color = '#93c5fd';
+            for (let i = 0; i < 12; i++) setTimeout(createSnowflake, i * 150);
+            snowInterval = setInterval(createSnowflake, 300);
+        }
+
+        function stopSnow() {
+            snowEnabled = false;
+            setCookie('dstat_snow', '0', 30);
+            clearInterval(snowInterval);
+            snowInterval = null;
+            const btn = document.getElementById('snowBtn');
+            if (btn) btn.style.color = '';
+            document.querySelectorAll('.snowflake').forEach(f => f.remove());
+        }
+
+        function toggleSnow() {
+            if (snowEnabled) stopSnow();
+            else startSnow();
+        }
+
+        // ---------- INIT ----------
+        document.addEventListener('DOMContentLoaded', function () {
+            initDropdowns();
+            loadSavedLang();
+            if (getCookie('dstat_snow') === '1') startSnow();
+        });
+    </script>
+
+</body>
+</html>

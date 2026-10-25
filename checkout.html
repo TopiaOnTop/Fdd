@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>dstat.in - Advertisements</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="mock-api.js"></script>
+    <script src="sidebar.js"></script>
+    <script src="banners.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        body {
+            font-family: "Inter", sans-serif;
+            user-select: none;
+        }
+
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0A0B12;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity .5s ease-out;
+        }
+
+        #loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 3.125pc;
+            height: 3.125pc;
+            border-style: solid;
+            border-width: 5px;
+            border-color: rgba(255, 255, 255, .2);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        :root {
+            --bg-primary: #0A0B12;
+            --bg-secondary: #0D0E1A;
+            --border-color: #2A2E3F;
+            --text-primary: #ffffff;
+            --text-secondary: #d1d5db;
+            --accent-color: #3b82f6;
+        }
+
+        .sidebar-item-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            color: var(--text-secondary, #9ca3af);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-item-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .sub-server-button {
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .sub-server-button:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: white;
+        }
+
+        .rotate-icon {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .rotate-icon.open {
+            transform: rotate(90deg);
+        }
+
+        .category-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 0;
+        }
+
+        * {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.82);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: #0D0E1A;
+            border: 1px solid #2A2E3F;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform 0.25s ease;
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid #2A2E3F;
+            border-radius: 10px;
+            padding: 12px 16px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.08);
+        }
+
+        .option-btn.selected {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.15);
+        }
+    </style>
+</head>
+
+<body class="bg-[--bg-primary] min-h-screen text-[--text-primary]">
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar"
+            class="fixed top-3 bottom-10 left-4 w-64 bg-[--bg-secondary] px-3 py-4 shadow-lg z-50 overflow-y-auto border border-gray-800/50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out rounded-2xl">
+            <button id="closeSidebar"
+                class="md:hidden absolute top-4 right-4 text-[--text-secondary] hover:text-[--text-primary]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div class="mb-6 flex items-center gap-3 px-3 pt-2">
+                <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:8px;flex-shrink:0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="text-gray-400">
+                        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+                        <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+                        <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
+                        <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+                    </svg>
+                </div>
+                <span class="text-base font-bold tracking-tight text-[--text-primary]">dstat.in</span>
+            </div>
+            <nav class="flex-1 space-y-6">
+                <div>
+                    <p class="px-3 text-xs font-semibold text-[--text-secondary] uppercase mb-2">MAIN</p>
+                    <div class="space-y-1">
+                        <a href="index.html" class="sidebar-item-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-5v-7H9v7H4a2 2 0 0 1-2-2z" />
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="reviews.html" class="sidebar-item-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="h-4 w-4">
+                                <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" />
+                            </svg>
+                            <span>Booter Review</span>
+                        </a>
+                        <a href="checkout.html" class="sidebar-item-link text-white bg-white/10 font-semibold">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m3 11 18-5v12L3 14v-3z"/>
+                                <path d="M11.6 16.8 a3 3 0 1 1-5.8-1.6"/>
+                            </svg>
+                            <span>Advertisements</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="px-3 text-xs font-semibold text-[--text-secondary] uppercase mb-2">LIVE DSTAT</p>
+                    <div class="space-y-1" id="servers-nav"></div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 md:p-10 md:ml-72 min-h-screen">
+            <button id="openSidebar" class="md:hidden fixed top-4 left-4 z-50 text-[--text-secondary]">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+            </button>
+
+            <div style="max-width:900px;margin:0 auto;width:100%;">
+                <div style="margin-bottom:32px;" class="flex items-center justify-between">
+                    <div>
+                        <h1 style="font-size:24px;font-weight:600;margin:0 0 4px 0;color:#fff;">Advertisements</h1>
+                        <p style="font-size:14px;color:#9ca3af;margin:0;">Select an advertisement option to get started.</p>
+                    </div>
+                    <a href="https://t.me/layer4terrorist" target="_blank"
+                        class="hidden sm:flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs rounded-lg transition-colors">
+                        <i class="fab fa-telegram"></i> Contact @Layer4Terrorist
+                    </a>
+                </div>
+
+                <!-- Advertising Slots Grid -->
+                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:20px;">
+
+                    <!-- Big Banner Slot -->
+                    <div style="background:#0f1019;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:22px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                            <span style="font-size:15px;font-weight:600;color:#fff;" class="flex items-center gap-2">
+                                <i data-lucide="image" class="w-4 h-4 text-blue-400"></i> Big Banner
+                            </span>
+                            <span id="banner-status"
+                                style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;background:rgba(34,197,94,0.1);color:#4ade80;">Available</span>
+                        </div>
+                        <p style="font-size:13px;color:#9ca3af;margin:0 0 18px 0;line-height:1.5;">
+                            Top & Bottom prominent banner placements across all dstat pages.
+                        </p>
+                        <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+                            <div>
+                                <div id="banner-count" style="font-size:12px;color:#6b7280;">Loading...</div>
+                                <div style="height:4px;width:110px;background:rgba(255,255,255,0.06);border-radius:99px;margin-top:8px;overflow:hidden;">
+                                    <div id="banner-bar" style="height:100%;width:0%;background:#3b82f6;border-radius:99px;"></div>
+                                </div>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div style="text-align:right;">
+                                    <div style="font-size:16px;font-weight:700;color:#fff;">From 5€</div>
+                                    <div style="font-size:11px;color:#6b7280;">Flexible plans</div>
+                                </div>
+                                <button onclick="openPurchaseModal('Big Banner')"
+                                    style="background:#3b82f6;color:#fff;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all 0.2s;">
+                                    Buy Spot
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Popout Popup Banner Slot -->
+                    <div style="background:#0f1019;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:22px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                            <span style="font-size:15px;font-weight:600;color:#fff;" class="flex items-center gap-2">
+                                <i data-lucide="maximize-2" class="w-4 h-4 text-purple-400"></i> Popup Banner
+                            </span>
+                            <span id="popup-status"
+                                style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;background:rgba(34,197,94,0.1);color:#4ade80;">Available</span>
+                        </div>
+                        <p style="font-size:13px;color:#9ca3af;margin:0 0 18px 0;line-height:1.5;">
+                            Floating advertisement popout triggered for visitors every 5 minutes.
+                        </p>
+                        <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+                            <div>
+                                <div id="popup-count" style="font-size:12px;color:#6b7280;">Loading...</div>
+                                <div style="height:4px;width:110px;background:rgba(255,255,255,0.06);border-radius:99px;margin-top:8px;overflow:hidden;">
+                                    <div id="popup-bar" style="height:100%;width:0%;background:#8b5cf6;border-radius:99px;"></div>
+                                </div>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div style="text-align:right;">
+                                    <div style="font-size:16px;font-weight:700;color:#fff;">From 5€</div>
+                                    <div style="font-size:11px;color:#6b7280;">High visibility</div>
+                                </div>
+                                <button onclick="openPurchaseModal('Popup Banner')"
+                                    style="background:#8b5cf6;color:#fff;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all 0.2s;">
+                                    Buy Spot
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Booter Review Spot Slot -->
+                    <div style="background:#0f1019;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:22px;" class="md:col-span-2">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                            <span style="font-size:15px;font-weight:600;color:#fff;" class="flex items-center gap-2">
+                                <i data-lucide="star" class="w-4 h-4 text-amber-400"></i> Booter Review
+                            </span>
+                            <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;background:rgba(255,255,255,0.06);color:#9ca3af;">Unlimited</span>
+                        </div>
+                        <p style="font-size:13px;color:#9ca3af;margin:0 0 18px 0;line-height:1.5;">
+                            Featured spot & verified rating on our Booter Review page (Lifetime placement).
+                        </p>
+                        <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+                            <div style="font-size:12px;color:#6b7280;">∞ Always Available</div>
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div style="text-align:right;">
+                                    <div style="font-size:16px;font-weight:700;color:#fff;">10€</div>
+                                    <div style="font-size:11px;color:#6b7280;">Lifetime</div>
+                                </div>
+                                <button onclick="openPurchaseModal('Booter Review')"
+                                    style="background:#f59e0b;color:#fff;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all 0.2s;">
+                                    Buy Spot
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Purchase Modal -->
+    <div id="purchaseModal" class="modal-overlay">
+        <div class="modal-box">
+            <!-- Modal Header -->
+            <div class="p-5 border-b border-gray-800 flex justify-between items-center">
+                <div>
+                    <h3 class="text-base font-bold text-white" id="modalTitle">Purchase Advertisement</h3>
+                    <p class="text-xs text-gray-400 mt-0.5" id="modalSubtitle">Step 1: Select Duration</p>
+                </div>
+                <button onclick="closePurchaseModal()" class="text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Step 1: Duration Selection -->
+            <div id="step1" class="p-5 space-y-3">
+                <div id="durationOptions" class="space-y-2.5">
+                    <!-- Populated dynamically -->
+                </div>
+                <button onclick="goToStep2()" id="step1NextBtn" disabled
+                    class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-xs rounded-xl transition-all mt-4">
+                    Next: Payment Method →
+                </button>
+            </div>
+
+ <!-- Step 2: Payment Method Selection -->
+            <div id="step2" class="p-5 space-y-3 hidden">
+                <div class="space-y-2">
+                    <button class="option-btn crypto-btn" onclick="selectCrypto('Bitcoin (BTC)')">
+                        <span class="flex items-center gap-3 text-sm font-semibold">
+                            <svg class="w-6 h-6 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><g fill="none" fill-rule="evenodd"><circle cx="16" cy="16" r="16" fill="#F7931A"/><path fill="#FFF" fill-rule="nonzero" d="M23.189 14.02c.314-2.096-1.283-3.223-3.465-3.975l.708-2.84-1.728-.43-.69 2.765c-.454-.114-.92-.22-1.385-.326l.695-2.783L15.596 6l-.708 2.839c-.376-.086-.746-.17-1.104-.26l.002-.009-2.384-.595-.46 1.846s1.283.294 1.256.312c.7.175.826.638.805 1.006l-.806 3.235c.048.012.11.03.18.057l-.183-.045-1.13 4.532c-.086.212-.303.531-.793.41.018.025-1.256-.313-1.256-.313l-.858 1.978 2.25.561c.418.105.828.215 1.231.318l-.715 2.872 1.727.43.708-2.84c.472.127.93.245 1.378.357l-.706 2.828 1.728.43.715-2.866c2.948.558 5.164.333 6.097-2.333.752-2.146-.037-3.385-1.588-4.192 1.13-.26 1.98-1.003 2.207-2.538zm-3.95 5.538c-.533 2.147-4.148.986-5.32.695l.95-3.805c1.172.293 4.929.872 4.37 3.11zm.535-5.569c-.487 1.953-3.495.96-4.47.717l.86-3.45c.975.243 4.118.696 3.61 2.733z"/></g></svg>
+                            Bitcoin (BTC)
+                        </span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
+                    </button>
+
+                    <button class="option-btn crypto-btn" onclick="selectCrypto('Ethereum (ETH)')">
+                        <span class="flex items-center gap-3 text-sm font-semibold">
+                            <svg class="w-6 h-6 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><g fill="none" fill-rule="evenodd"><circle cx="16" cy="16" r="16" fill="#627EEA"/><g fill="#FFF" fill-rule="nonzero"><path fill-opacity=".602" d="M16.498 4v8.87l7.497 3.35z"/><path d="M16.498 4L9 16.22l7.498-3.35z"/><path fill-opacity=".602" d="M16.498 21.968v6.027L24 17.616z"/><path d="M16.498 27.995v-6.028L9 17.616z"/><path fill-opacity=".2" d="M16.498 20.573l7.497-4.353-7.497-3.348z"/><path fill-opacity=".602" d="M9 16.22l7.498 4.353v-7.701z"/></g></g></svg>
+                            Ethereum (ETH)
+                        </span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
+                    </button>
+
+                    <button class="option-btn crypto-btn" onclick="selectCrypto('Solana (SOL)')">
+                        <span class="flex items-center gap-3 text-sm font-semibold">
+                            <svg class="w-6 h-6 flex-shrink-0" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><g fill="none"><circle fill="#66F9A1" cx="16" cy="16" r="16"/><path d="M9.925 19.687a.59.59 0 01.415-.17h14.366a.29.29 0 01.207.497l-2.838 2.815a.59.59 0 01-.415.171H7.294a.291.291 0 01-.207-.498l2.838-2.815zm0-10.517A.59.59 0 0110.34 9h14.366c.261 0 .392.314.207.498l-2.838 2.815a.59.59 0 01-.415.17H7.294a.291.291 0 01-.207-.497L9.925 9.17zm12.15 5.225a.59.59 0 00-.415-.17H7.294a.291.291 0 00-.207.498l2.838 2.815c.11.109.26.17.415.17h14.366a.291.291 0 00.207-.498l-2.838-2.815z" fill="#FFF"/></g></svg>
+                            Solana (SOL)
+                        </span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
+                    </button>
+
+                    <button class="option-btn crypto-btn" onclick="selectCrypto('Litecoin (LTC)')">
+                        <span class="flex items-center gap-3 text-sm font-semibold">
+                            <svg class="w-6 h-6 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><g fill="none" fill-rule="evenodd"><circle cx="16" cy="16" r="16" fill="#BFBBBB"/><path fill="#FFF" d="M10.427 19.214L9 19.768l.688-2.759 1.444-.58L13.213 8h5.129l-1.519 6.196 1.41-.571-.68 2.75-1.427.571-.848 3.483H23L22.127 24H9.252z"/></g></svg>
+                            Litecoin (LTC)
+                        </span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
+                    </button>
+
+                    <button class="option-btn crypto-btn" onclick="selectCrypto('Monero (XMR)')">
+                        <span class="flex items-center gap-3 text-sm font-semibold">
+                            <svg class="w-6 h-6 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><g fill="none" fill-rule="evenodd"><circle cx="16" cy="16" r="16" fill="#F60"/><path fill="#FFF" fill-rule="nonzero" d="M15.97 5.235c5.985 0 10.825 4.84 10.825 10.824a11.07 11.07 0 01-.558 3.432h-3.226v-9.094l-7.04 7.04-7.04-7.04v9.094H5.704a11.07 11.07 0 01-.557-3.432c0-5.984 4.84-10.824 10.824-10.824zM14.358 19.02L16 20.635l1.613-1.614 3.051-3.08v5.72h4.547a10.806 10.806 0 01-9.24 5.192c-3.902 0-7.334-2.082-9.24-5.192h4.546v-5.72l3.08 3.08z"/></g></svg>
+                            Monero (XMR)
+                        </span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
+                    </button>
+
+                    <button class="option-btn crypto-btn" onclick="selectCrypto('PayPal')">
+                        <span class="flex items-center gap-3 text-sm font-semibold">
+                            <i class="fab fa-paypal text-blue-500 text-xl w-6 text-center"></i>
+                            PayPal
+                        </span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-between pt-2">
+                    <button onclick="goToStep1()" class="text-xs text-gray-400 hover:text-white flex items-center gap-1">
+                        ← Back
+                    </button>
+                    <button onclick="finalizePurchase()" id="completeBtn" disabled
+                        class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-xs rounded-xl transition-all">
+                        Contact Telegram →
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let currentAdType = '';
+        let selectedDuration = '';
+        let selectedPrice = '';
+        let selectedPayment = '';
+
+        const pricingConfig = {
+            'Big Banner': [
+                { time: '7 Days', price: '5€' },
+                { time: '1 Month', price: '10€' },
+                { time: 'Lifetime', price: '25€' }
+            ],
+            'Popup Banner': [
+                { time: '7 Days', price: '5€' },
+                { time: '1 Month', price: '10€' },
+                { time: 'Lifetime', price: '25€' }
+            ],
+            'Booter Review': [
+                { time: 'Lifetime', price: '10€' }
+            ]
+        };
+
+        function openPurchaseModal(adType) {
+            currentAdType = adType;
+            selectedDuration = '';
+            selectedPrice = '';
+            selectedPayment = '';
+
+            document.getElementById('modalTitle').textContent = `Buy ${adType}`;
+            document.getElementById('modalSubtitle').textContent = 'Step 1: Select Duration';
+
+            const container = document.getElementById('durationOptions');
+            container.innerHTML = '';
+
+            const options = pricingConfig[adType] || [];
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn duration-option';
+                btn.innerHTML = `
+                    <span class="text-sm font-semibold">${opt.time}</span>
+                    <span class="text-xs font-bold px-2.5 py-1 bg-blue-500/20 text-blue-400 rounded-lg">${opt.price}</span>
+                `;
+                btn.onclick = () => selectDuration(opt.time, opt.price, btn);
+                container.appendChild(btn);
+            });
+
+            document.getElementById('step1NextBtn').disabled = true;
+            document.getElementById('completeBtn').disabled = true;
+
+            document.getElementById('step1').classList.remove('hidden');
+            document.getElementById('step2').classList.add('hidden');
+
+            document.getElementById('purchaseModal').classList.add('active');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function selectDuration(time, price, btnEl) {
+            selectedDuration = time;
+            selectedPrice = price;
+            document.querySelectorAll('.duration-option').forEach(b => b.classList.remove('selected'));
+            btnEl.classList.add('selected');
+            document.getElementById('step1NextBtn').disabled = false;
+        }
+
+        function goToStep2() {
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+            document.getElementById('modalSubtitle').textContent = 'Step 2: Select Payment Method';
+        }
+
+        function goToStep1() {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+            document.getElementById('modalSubtitle').textContent = 'Step 1: Select Duration';
+        }
+
+        function selectCrypto(name, iconClass) {
+            selectedPayment = name;
+            document.querySelectorAll('.crypto-btn').forEach(b => b.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            document.getElementById('completeBtn').disabled = false;
+        }
+
+        function finalizePurchase() {
+            if (!currentAdType || !selectedDuration || !selectedPayment) return;
+            const msg = `Hello, I want to buy a ${currentAdType} at dstat.in for ${selectedDuration} (${selectedPrice}) with ${selectedPayment}`;
+            const targetUrl = `https://t.me/layer4terrorist?text=${encodeURIComponent(msg)}`;
+            window.open(targetUrl, '_blank');
+            closePurchaseModal();
+        }
+
+        function closePurchaseModal() {
+            document.getElementById('purchaseModal').classList.remove('active');
+        }
+
+        document.addEventListener("DOMContentLoaded", async function () {
+            const loader = document.getElementById('loader');
+            if (loader) loader.classList.add('hidden');
+
+            initializeSidebar();
+
+            try {
+                const servers = await fetch("/api/servers").then(r => r.json());
+                renderServers(servers, "layer4");
+                initializeSidebar();
+
+                const banners = await fetch("/api/banners").then(r => r.json());
+                const standardBanners = banners.filter(b => (b.position || '').toLowerCase() !== 'popout');
+                const popoutBanners = banners.filter(b => (b.position || '').toLowerCase() === 'popout');
+
+                const totalBannerCap = 8;
+                const totalPopupCap = 8;
+
+                const standardCount = standardBanners.length;
+                const popoutCount = popoutBanners.length;
+
+                const bcEl = document.getElementById("banner-count");
+                const bbEl = document.getElementById("banner-bar");
+                const bsEl = document.getElementById("banner-status");
+                if (bcEl) bcEl.textContent = standardCount + " / " + totalBannerCap;
+                if (bbEl) bbEl.style.width = Math.min(100, Math.round((standardCount / totalBannerCap) * 100)) + "%";
+                if (bsEl) {
+                    if (standardCount >= totalBannerCap) {
+                        bsEl.textContent = "Sold out"; bsEl.style.background = "rgba(239,68,68,0.12)"; bsEl.style.color = "#f87171";
+                    } else {
+                        bsEl.textContent = "Available"; bsEl.style.background = "rgba(34,197,94,0.1)"; bsEl.style.color = "#4ade80";
+                    }
+                }
+
+                const pcEl = document.getElementById("popup-count");
+                const pbEl = document.getElementById("popup-bar");
+                const psEl = document.getElementById("popup-status");
+                if (pcEl) pcEl.textContent = popoutCount + " / " + totalPopupCap;
+                if (pbEl) pbEl.style.width = Math.min(100, Math.round((popoutCount / totalPopupCap) * 100)) + "%";
+                if (psEl) {
+                    if (popoutCount >= totalPopupCap) {
+                        psEl.textContent = "Sold out"; psEl.style.background = "rgba(239,68,68,0.12)"; psEl.style.color = "#f87171";
+                    } else {
+                        psEl.textContent = "Available"; psEl.style.background = "rgba(34,197,94,0.1)"; psEl.style.color = "#4ade80";
+                    }
+                }
+            } catch (e) { console.error(e); }
+        });
+    </script>
+</body>
+
+</html>

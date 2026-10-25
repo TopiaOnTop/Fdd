@@ -1,0 +1,51 @@
+[
+  {
+    "id": "ban_top_1",
+    "place": "Top Header Banner 1",
+    "img": "/elitenetwork.gif",
+    "position": "top",
+    "url": "https://elitestress.st"
+  },
+  {
+    "id": "ban_top_2",
+    "place": "Top Header Banner 2",
+    "img": "/reverb.gif",
+    "position": "top",
+    "url": "https://t.me/dstatfyi"
+  },
+  {
+    "id": "ban_mid_1",
+    "place": "Middle Left Banner",
+    "img": "/ratelimit.gif",
+    "position": "middle_left",
+    "url": "https://t.me/dstatfyi"
+  },
+  {
+    "id": "ban_mid_2",
+    "place": "Middle Right Banner",
+    "img": "/ifucukenhatethishsit.gif",
+    "position": "middle_right",
+    "url": "https://t.me/dstatfyi"
+  },
+  {
+    "id": "ban_bot_1",
+    "place": "Bottom Banner 1",
+    "img": "/sele.gif",
+    "position": "bottom",
+    "url": "https://t.me/dstatfyi"
+  },
+  {
+    "id": "ban_pop_1",
+    "place": "Popout Modal Banner 1",
+    "img": "/vahn.gif",
+    "position": "popout",
+    "url": "https://t.me/dstatfyi"
+  },
+  {
+    "id": "ban_pop_2",
+    "place": "Popout Modal Banner 2",
+    "img": "/buy.png",
+    "position": "popout",
+    "url": "https://t.me/dstatfyi"
+  }
+]
