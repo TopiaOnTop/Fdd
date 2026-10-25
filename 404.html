@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script>
+    // GitHub Pages SPA redirect trick
+    // Encode the full path+search into a query param and redirect to index.html
+    var path = window.location.pathname;
+    var search = window.location.search;
+    var hash = window.location.hash;
+
+    // Map old paths to SPA params
+    var redirectSearch = search;
+    if (path === '/l4' || path === '/layer4') {
+      redirectSearch = (search ? search + '&l4' : '?l4');
+    } else if (path === '/l7' || path === '/layer7') {
+      redirectSearch = (search ? search + '&l7' : '?l7');
+    } else if (path === '/reviews') {
+      redirectSearch = '?page=reviews';
+    } else if (path === '/checkout') {
+      redirectSearch = '?page=checkout';
+    }
+
+    window.location.replace('/' + redirectSearch + hash);
+  </script>
+</head>
+<body></body>
+</html>

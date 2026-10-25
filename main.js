@@ -49,7 +49,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 function parseUrlAndSwitch() {
     const urlParams = new URLSearchParams(window.location.search);
     const selectedServerId = urlParams.get('id');
-    const isLayer7Route = window.location.pathname.startsWith('/l7') || window.location.pathname.startsWith('/layer7') || urlParams.has('l7') || urlParams.get('layer') === 'layer7';
+
+    // Support both old path-based routes (redirected via 404.html) and query-param routes
+    const path = window.location.pathname;
+    const isLayer7Route = 
+        path === '/l7' || path === '/layer7' ||
+        urlParams.has('l7') || 
+        urlParams.get('layer') === 'layer7';
+    
     const layer = isLayer7Route ? 'layer7' : 'layer4';
 
     window.switchActiveServer(layer, selectedServerId);
